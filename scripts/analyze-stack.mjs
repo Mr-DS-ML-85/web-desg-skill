@@ -414,7 +414,8 @@ function main() {
   const css = read('styles.css') + '\n' + read('inline-styles.css');
   const network = (() => { try { return JSON.parse(read('network.json') || '[]'); } catch { return []; } })();
   const meta = (() => { try { return JSON.parse(read('meta.json') || '{}'); } catch { return {}; } })();
-  const consoleLog = read('console.log').split('\n')
+  const consoleLogRaw = read('console.log');
+  const consoleLog = consoleLogRaw ? consoleLogRaw.split('\n').map(l => l.trim()).filter(Boolean) : [];
 
   const report = {
     sourceUrl: meta.url || args.scrapeDir,
