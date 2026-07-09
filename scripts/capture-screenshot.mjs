@@ -135,10 +135,14 @@ async function main() {
 
   const { chromium } = await import(join(RUNNER_DIR, 'node_modules', 'playwright', 'index.mjs'));
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--proxy-server=direct://'],
+  });
+  const DEFAULT_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
   try {
     // Build context options
-    const contextOpts = {};
+    const contextOpts = { userAgent: DEFAULT_UA };
     if (args.dark) contextOpts.colorScheme = 'dark';
     if (args.userAgent) contextOpts.userAgent = args.userAgent;
     if (args.auth) {
