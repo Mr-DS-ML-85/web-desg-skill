@@ -151,7 +151,7 @@ cp -r web-desg-skill /path/to/your/skills/
 
 ```bash
 git clone https://github.com/Mr-DS-ML-85/web-desg-skill.git
-cd web-desg
+cd web-desg-skill
 node scripts/setup-playwright.mjs
 ```
 
