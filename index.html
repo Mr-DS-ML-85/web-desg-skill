@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>web-desg — Website Design Capture & Cloner</title>
+  <meta name="description" content="Capture any website's look → extract how it's built → rebuild it as a standalone clone. Also a powerful WebUI debugger for runtime errors source-code agents can't see.">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-card: #161b22;
+      --bg-code: #1c2128;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --green: #3fb950;
+      --red: #f85149;
+      --yellow: #d29922;
+      --orange: #db6d28;
+      --purple: #bc8cff;
+      --pink: #f778ba;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(88, 166, 255, 0.15), transparent),
+        radial-gradient(ellipse 60% 50% at 30% 30%, rgba(247, 120, 186, 0.08), transparent);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-emoji { font-size: 72px; line-height: 1; margin-bottom: 16px; display: block; }
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 50%, var(--pink) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero .tagline {
+      font-size: 22px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .hero .subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+
+    /* BADGES */
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s, filter 0.15s;
+      border: 1px solid transparent;
+    }
+    .badge:hover { transform: translateY(-1px); filter: brightness(1.15); }
+    .badge-yellow { background: #cb6b00; color: #fff; }
+    .badge-blue   { background: #1f6feb; color: #fff; }
+    .badge-green  { background: #1a7f37; color: #fff; }
+    .badge-orange { background: #974d10; color: #fff; }
+    .badge-red    { background: #c93c37; color: #fff; }
+    .badge-pink   { background: #a93172; color: #fff; }
+    .badge-purple { background: #6e40c9; color: #fff; }
+    .badge-gray   { background: #30363d; color: var(--text); border-color: var(--border); }
+
+    /* SECTIONS */
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    h2 .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      border-radius: 10px;
+      font-size: 18px;
+      color: #fff;
+    }
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--accent);
+    }
+    p { margin-bottom: 14px; color: var(--text); }
+    .lead { font-size: 18px; color: var(--text-muted); }
+
+    /* FEATURE GRID */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+    .feature-card .icon { font-size: 32px; display: block; margin-bottom: 12px; }
+    .feature-card h4 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    .feature-card p { font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+    /* DEBUGGING HIGHLIGHT */
+    .debug-hero {
+      background: linear-gradient(135deg, rgba(248, 81, 73, 0.1), rgba(210, 153, 34, 0.08));
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    .debug-hero .label {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--red);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    .debug-hero h3 {
+      color: var(--text);
+      font-size: 24px;
+      margin: 0 0 12px;
+    }
+    .debug-hero p {
+      font-size: 17px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .symptom-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .symptom-table th, .symptom-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .symptom-table th {
+      background: #1c2128;
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .symptom-table tr:last-child td { border-bottom: none; }
+    .symptom-table tr:hover { background: rgba(88, 166, 255, 0.04); }
+    .symptom-table code {
+      background: var(--bg-code);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--orange);
+      font-family: ui-monospace, "SF Mono", Monaco, monospace;
+    }
+    .symptom-table strong { color: var(--text); }
+
+    /* CODE BLOCKS */
+    pre {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 16px 0 24px;
+      font-family: ui-monospace, "SF Mono", Monaco, Menlo, monospace;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+    code {
+      font-family: ui-monospace, "SF Mono", Monaco, Menlo, monospace;
+    }
+    p code, li code, td code {
+      background: var(--bg-code);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: var(--orange);
+      border: 1px solid var(--border);
+    }
+    .comment { color: var(--text-muted); }
+    .flag    { color: var(--yellow); }
+    .string  { color: var(--green); }
+    .keyword { color: var(--purple); }
+
+    /* ARCHITECTURE DIAGRAM */
+    .pipeline {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin: 24px 0;
+    }
+    .pipeline-stage {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .pipeline-stage:last-child { border-bottom: none; }
+    .pipeline-stage .num {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .pipeline-stage:nth-child(1) .num { background: var(--accent); }
+    .pipeline-stage:nth-child(2) .num { background: var(--green); }
+    .pipeline-stage:nth-child(3) .num { background: var(--orange); }
+    .pipeline-stage:nth-child(4) .num { background: var(--purple); }
+    .pipeline-stage:nth-child(5) .num { background: var(--pink); }
+    .pipeline-stage .body { flex: 1; }
+    .pipeline-stage .body h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .pipeline-stage .body p { font-size: 14px; color: var(--text-muted); margin: 0; }
+    .pipeline-stage .script {
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--accent);
+      background: var(--bg-code);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* FILE TREE */
+    .file-tree {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: ui-monospace, "SF Mono", Monaco, monospace;
+      font-size: 13.5px;
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+    .file-tree .dir { color: var(--accent); font-weight: 600; }
+    .file-tree .file { color: var(--text); }
+    .file-tree .comment { color: var(--text-muted); }
+
+    /* TABLES */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .data-table th, .data-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table th {
+      background: #1c2128;
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 13px;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table code {
+      background: var(--bg-code);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: var(--orange);
+    }
+
+    /* CALLOUT */
+    .callout {
+      background: rgba(88, 166, 255, 0.08);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+    .callout strong { color: var(--accent); }
+    .callout p:last-child { margin-bottom: 0; }
+
+    /* COMPARISON TABLE */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .compare-table th, .compare-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table th { background: #1c2128; color: var(--accent); font-weight: 600; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table .highlight { background: rgba(88, 166, 255, 0.1); font-weight: 600; }
+    .compare-table code {
+      background: var(--bg-code);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--orange);
+      font-family: ui-monospace, monospace;
+      font-size: 13px;
+    }
+
+    /* CTA */
+    .cta {
+      text-align: center;
+      padding: 60px 0;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: transform 0.15s, filter 0.15s;
+      border: 1px solid transparent;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--bg-card); color: var(--text); border-color: var(--border); }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 40px; }
+      .hero .tagline { font-size: 18px; }
+      h2 { font-size: 24px; }
+      .pipeline { padding: 20px; }
+      .pipeline-stage { flex-wrap: wrap; }
+      .symptom-table { font-size: 13px; }
+      .symptom-table th, .symptom-table td { padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero">
+  <div class="container">
+    <span class="hero-emoji">🎨</span>
+    <h1>web-desg</h1>
+    <p class="tagline">Website Design Capture &amp; Cloner for AI Agents</p>
+    <p class="subtitle">Capture any website's look → extract how it's built → rebuild it as a standalone clone. Also a powerful WebUI debugger for runtime errors that source-code-only agents cannot see.</p>
+    <div class="badges">
+      <a class="badge badge-yellow" href="#license">License: MIT</a>
+      <a class="badge badge-blue" href="#">v1.0.0</a>
+      <a class="badge badge-green" href="#quick-start">Node ≥ 18</a>
+      <a class="badge badge-orange" href="#quick-start">Playwright required</a>
+      <a class="badge badge-red" href="#debugging">WebUI Debugging</a>
+      <a class="badge badge-pink" href="#contributing">PRs welcome</a>
+      <a class="badge badge-gray" href="#">⭐ Star on GitHub</a>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== FEATURES ===================== -->
+<section id="features">
+  <div class="container">
+    <h2><span class="num">✨</span> Features</h2>
+    <div class="features">
+      <div class="feature-card">
+        <span class="icon">📸</span>
+        <h4>Screenshot Capture</h4>
+        <p>Full-page, viewport, or multi-device (iPhone/iPad/desktop) screenshots with dark mode, auth, cookies, and wait-for options.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🕷️</span>
+        <h4>Site Scraping</h4>
+        <p>Extracts rendered DOM, all CSS (linked + JS-injected + adopted stylesheets), fonts, images, colors, network log, and metadata.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🔍</span>
+        <h4>Stack Analysis</h4>
+        <p>Detects framework (Next.js/Nuxt/VitePress/WordPress/16+ others), UI library, CSS approach, analytics, hosting, structural patterns.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🎨</span>
+        <h4>Design Tokens</h4>
+        <p>Extracts palette, typography (with CSS variable resolution), spacing, radii, shadows, breakpoints as JSON + ready-to-use CSS custom properties.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon">🏗️</span>
+        <h4>Clone Builder</h4>
+        <p>Rebuilds the design as a standalone HTML/CSS project with placeholder content. Includes a starter template.</p>
+      </div>
+      <div class="feature-card" style="border-color: var(--red);">
+        <span class="icon">🐛</span>
+        <h4>WebUI Debugger</h4>
+        <p>Detects runtime errors, broken assets, layout issues, and hydration failures that source-code-only agents cannot see.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DEBUGGING ===================== -->
+<section id="debugging" style="background: linear-gradient(180deg, rgba(248, 81, 73, 0.03), transparent);">
+  <div class="container">
+    <h2><span class="num" style="background: var(--red);">🐛</span> Debugging WebUI Errors</h2>
+
+    <div class="debug-hero">
+      <span class="label">The Killer Feature</span>
+      <h3>See what's actually happening — not what the source code says should happen</h3>
+      <p>Regular AI agents read source code and reason about what <em>should</em> happen. <code>web-desg</code> actually renders the page in a real browser and captures what <em>is</em> happening — closing the gap between "code looks right" and "site works."</p>
+    </div>
+
+    <h3>What it catches that source-code agents miss</h3>
+    <table class="symptom-table">
+      <thead>
+        <tr><th>Symptom</th><th>How web-desg reveals it</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>JavaScript runtime errors</strong></td><td><code>console.log</code> captures every <code>pageerror</code> event — the actual exception message and stack, not a guess</td></tr>
+        <tr><td><strong>Failed network requests</strong></td><td><code>network.json</code> shows 4xx/5xx responses, timeouts, and CORS errors with exact URLs</td></tr>
+        <tr><td><strong>Hydration mismatches</strong> (React/Next.js)</td><td>Console log captures <code>Hydration failed</code> warnings — invisible in source code</td></tr>
+        <tr><td><strong>Font loading failures</strong></td><td><code>fonts-manifest.json</code> shows what was requested; <code>console.log</code> shows <code>Failed to load resource</code> for what failed</td></tr>
+        <tr><td><strong>Mixed content warnings</strong></td><td>Console + network log flag HTTP assets on HTTPS pages</td></tr>
+        <tr><td><strong>CORS errors</strong></td><td>Console captures <code>Access-Control-Allow-Origin</code> violations</td></tr>
+        <tr><td><strong>CSS specificity wars</strong></td><td><code>styles.css</code> + <code>inline-styles.css</code> show the actual cascaded rules at runtime, including CSS-in-JS injected styles</td></tr>
+        <tr><td><strong>Adopted stylesheets missing</strong></td><td><code>inline-styles.css</code> walks <code>document.adoptedStyleSheets</code> — most scrapers miss this entirely</td></tr>
+        <tr><td><strong>Lazy-loaded content missing</strong></td><td>Compare screenshots with <code>--delay 0</code> vs <code>--delay 3000</code> to see what never loads</td></tr>
+        <tr><td><strong>Layout shift (CLS)</strong></td><td>Multi-delay screenshots reveal content jumping as late resources arrive</td></tr>
+        <tr><td><strong>Mobile responsiveness breaks</strong></td><td>Multi-device screenshots show exactly which breakpoint fails</td></tr>
+        <tr><td><strong>Dark mode broken</strong></td><td><code>--dark</code> flag forces <code>prefers-color-scheme: dark</code> and shows missing dark tokens</td></tr>
+        <tr><td><strong>Z-index / stacking issues</strong></td><td>Screenshots reveal overlap problems invisible in source</td></tr>
+        <tr><td><strong>WebFont FOUT/FOIT</strong></td><td><code>--delay 0</code> captures the unstyled flash; <code>--delay 2000</code> captures the final state</td></tr>
+        <tr><td><strong>Web Component shadow DOM issues</strong></td><td>Rendered DOM includes shadow roots where applicable</td></tr>
+        <tr><td><strong>SPA route rendering failures</strong></td><td><code>--wait-for "&lt;selector&gt;"</code> reveals whether the target element ever mounts</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Quick debugging workflow</h3>
+<pre><span class="comment"># 1. Capture the actual rendered state with console + network logs</span>
+node scripts/scrape-site.mjs \
+  --url https://your-broken-app.com \
+  --out-dir ./debug/ \
+  --download-js
+
+<span class="comment"># 2. Check for runtime errors</span>
+cat ./debug/console.log | grep -E <span class="string">"\[error\]|\[warning\]"</span>
+
+<span class="comment"># 3. Check for failed requests</span>
+python3 -c <span class="string">"
+import json
+for n in json.load(open('./debug/network.json')):
+    if n.get('status', 0) &gt;= 400:
+        print(f\"{n['status']} {n['url'][:120]}\")
+"</span>
+
+<span class="comment"># 4. Capture before/after delay to spot layout shift</span>
+node scripts/capture-screenshot.mjs --url https://your-broken-app.com <span class="flag">--delay 0</span>    --out before.png
+node scripts/capture-screenshot.mjs --url https://your-broken-app.com <span class="flag">--delay 3000</span> --out after.png
+
+<span class="comment"># 5. Capture multiple breakpoints to find where layout breaks</span>
+node scripts/capture-screenshot.mjs --url https://your-broken-app.com \
+  --devices <span class="string">"iphone-14,ipad,desktop-1080,desktop-1440"</span> --out-dir ./breakpoints/</pre>
+
+    <h3>Why this beats reading source code</h3>
+    <p>A source-code-only agent can tell you "this <code>useEffect</code> looks suspicious" or "this CSS selector might conflict." It cannot tell you:</p>
+    <ul style="margin-left: 24px; margin-bottom: 16px; color: var(--text-muted);">
+      <li style="margin-bottom: 8px;">That the actual error thrown at runtime is <code>TypeError: Cannot read property 'map' of undefined</code> from line 47 of <code>chunk-a1b2c.js</code></li>
+      <li style="margin-bottom: 8px;">That <code>https://api.example.com/users</code> is returning 502s in production</li>
+      <li style="margin-bottom: 8px;">That your dark mode is broken because <code>--color-text</code> isn't defined in the <code>:root[data-theme="dark"]</code> block</li>
+      <li style="margin-bottom: 8px;">That the mobile layout shoves the sidebar off-screen at exactly 412px wide</li>
+      <li style="margin-bottom: 8px;">That the hero image hasn't loaded by the time the user sees the page</li>
+    </ul>
+    <div class="callout">
+      <p><code>web-desg</code> captures all of this. Pair it with a coding agent for the actual fixes and you have a complete debugging loop: <strong>see the bug → understand the bug → fix the bug → verify the fix</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUICK START ===================== -->
+<section id="quick-start">
+  <div class="container">
+    <h2><span class="num">🚀</span> Quick Start</h2>
+<pre><span class="comment"># 1. Clone</span>
+git clone https://github.com/Mr-DS-ML-85/web-desg-skill.git
+cd web-desg-skill
+
+<span class="comment"># 2. One-time setup (installs Playwright + Chromium)</span>
+node scripts/setup-playwright.mjs
+
+<span class="comment"># 3. Capture a screenshot</span>
+node scripts/capture-screenshot.mjs \
+  --url https://stripe.com \
+  --full \
+  --out screenshot.png
+
+<span class="comment"># 4. Scrape the site</span>
+node scripts/scrape-site.mjs \
+  --url https://stripe.com \
+  --out-dir ./stripe-scrape/
+
+<span class="comment"># 5. Analyze the stack</span>
+node scripts/analyze-stack.mjs \
+  --scrape-dir ./stripe-scrape/ \
+  --out ./stripe-scrape/stack-analysis.json
+
+<span class="comment"># 6. Extract design tokens</span>
+node scripts/design-tokens.mjs \
+  --scrape-dir ./stripe-scrape/ \
+  --out ./stripe-scrape/design-tokens.json</pre>
+
+    <div class="callout">
+      <p><strong>Requirements:</strong> Node.js ≥ 18, ~200MB disk space (Playwright + Chromium), internet access for scraping.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== USAGE EXAMPLES ===================== -->
+<section id="usage">
+  <div class="container">
+    <h2><span class="num">🎯</span> Usage Examples</h2>
+
+    <h3>Screenshot Capture</h3>
+<pre><span class="comment"># Full-page screenshot</span>
+node scripts/capture-screenshot.mjs \
+  --url https://example.com --full --out full.png
+
+<span class="comment"># Multi-device capture (responsive design study)</span>
+node scripts/capture-screenshot.mjs \
+  --url https://example.com \
+  --devices <span class="string">"iphone-14,ipad,desktop-1080,desktop-1440"</span> \
+  --out-dir ./devices/
+
+<span class="comment"># Authenticated / dark mode</span>
+node scripts/capture-screenshot.mjs \
+  --url https://app.example.com \
+  --auth user:pass <span class="flag">--dark</span> --wait-for <span class="string">"main"</span> --out app.png</pre>
+
+    <p><strong>Available device presets:</strong> <code>iphone-14</code>, <code>iphone-14-pro</code>, <code>iphone-se</code>, <code>ipad</code>, <code>ipad-pro</code>, <code>pixel-7</code>, <code>galaxy-s22</code>, <code>desktop-1080</code>, <code>desktop-1440</code>, <code>desktop-1920</code></p>
+
+    <h3>Site Scraping</h3>
+<pre>node scripts/scrape-site.mjs \
+  --url https://example.com \
+  --out-dir ./scrape/ \
+  --max-images 50 \
+  --download-js</pre>
+
+    <p><strong>Produces:</strong></p>
+    <table class="data-table">
+      <thead><tr><th>File</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>dom.html</code></td><td>Fully rendered DOM (post-JS)</td></tr>
+        <tr><td><code>styles.css</code></td><td>All CSS rules, deduped and organized</td></tr>
+        <tr><td><code>inline-styles.css</code></td><td>CSS from <code>&lt;style&gt;</code> tags, <code>style=</code> attributes, and <code>adoptedStyleSheets</code></td></tr>
+        <tr><td><code>fonts/</code></td><td>Downloaded font files + <code>fonts-manifest.json</code></td></tr>
+        <tr><td><code>images/</code></td><td>Downloaded images + <code>images-manifest.json</code></td></tr>
+        <tr><td><code>colors.json</code></td><td>Every color used, with frequency count</td></tr>
+        <tr><td><code>assets-manifest.json</code></td><td>All assets discovered with URLs/sizes/types</td></tr>
+        <tr><td><code>network.json</code></td><td>Network request log — key for debugging</td></tr>
+        <tr><td><code>meta.json</code></td><td>Page metadata (title, OG tags, favicon, etc.)</td></tr>
+        <tr><td><code>console.log</code></td><td>Browser console output — key for debugging</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Stack Analysis</h3>
+<pre>node scripts/analyze-stack.mjs --scrape-dir ./scrape/ --out stack.json</pre>
+<pre>{
+  <span class="string">"framework"</span>: { <span class="string">"name"</span>: <span class="string">"VitePress"</span>, <span class="string">"version"</span>: <span class="string">"2.0.0"</span>, <span class="string">"confidence"</span>: 0.98 },
+  <span class="string">"css_approach"</span>: { <span class="string">"name"</span>: <span class="string">"Tailwind CSS"</span>, <span class="string">"confidence"</span>: 0.9 },
+  <span class="string">"analytics"</span>: [<span class="string">"Fathom"</span>],
+  <span class="string">"patterns"</span>: [<span class="string">"sticky-nav"</span>, <span class="string">"hero-section"</span>, <span class="string">"feature-card-grid"</span>]
+}</pre>
+
+    <h3>Design Tokens</h3>
+<pre>node scripts/design-tokens.mjs --scrape-dir ./scrape/ --out tokens.json</pre>
+<pre>{
+  <span class="string">"colors"</span>: {
+    <span class="string">"brand"</span>: <span class="string">"#008039"</span>,
+    <span class="string">"background"</span>: { <span class="string">"default"</span>: <span class="string">"#f6f6f7"</span>, <span class="string">"muted"</span>: <span class="string">"#f5f5fa"</span> },
+    <span class="string">"text"</span>: { <span class="string">"primary"</span>: <span class="string">"#16171d"</span>, <span class="string">"secondary"</span>: <span class="string">"#222325"</span> }
+  },
+  <span class="string">"typography"</span>: {
+    <span class="string">"heading"</span>: { <span class="string">"family"</span>: <span class="string">"APK Protocol"</span> },
+    <span class="string">"body"</span>: { <span class="string">"family"</span>: <span class="string">"Inter"</span>, <span class="string">"size"</span>: <span class="string">"16px"</span> }
+  },
+  <span class="string">"cssVariables"</span>: <span class="string">":root { --color-brand: #008039; ... }"</span>
+}</pre>
+  </div>
+</section>
+
+<!-- ===================== ARCHITECTURE ===================== -->
+<section id="architecture">
+  <div class="container">
+    <h2><span class="num">🏗️</span> Architecture</h2>
+    <div class="pipeline">
+      <div class="pipeline-stage">
+        <div class="num">1</div>
+        <div class="body">
+          <h4>Screenshot</h4>
+          <p>PNG output — full page, viewport, or multi-device. Captures the actual visual state.</p>
+        </div>
+        <span class="script">capture-screenshot.mjs</span>
+      </div>
+      <div class="pipeline-stage">
+        <div class="num">2</div>
+        <div class="body">
+          <h4>Scrape</h4>
+          <p>dom.html, styles.css, fonts/, images/, network.json — the full asset stack.</p>
+        </div>
+        <span class="script">scrape-site.mjs</span>
+      </div>
+      <div class="pipeline-stage">
+        <div class="num">3</div>
+        <div class="body">
+          <h4>Stack Analysis</h4>
+          <p>Framework, UI library, CSS approach, analytics, hosting, structural patterns.</p>
+        </div>
+        <span class="script">analyze-stack.mjs</span>
+      </div>
+      <div class="pipeline-stage">
+        <div class="num">4</div>
+        <div class="body">
+          <h4>Design Tokens</h4>
+          <p>Palette, typography, spacing, radii, shadows as JSON + CSS custom properties.</p>
+        </div>
+        <span class="script">design-tokens.mjs</span>
+      </div>
+      <div class="pipeline-stage">
+        <div class="num">5</div>
+        <div class="body">
+          <h4>Clone</h4>
+          <p>Standalone HTML/CSS project with placeholder content. Agent-driven.</p>
+        </div>
+        <span class="script">clone-template.html</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STRUCTURE ===================== -->
+<section id="structure">
+  <div class="container">
+    <h2><span class="num">📁</span> Skill Structure</h2>
+    <div class="file-tree">
+<span class="dir">web-desg/</span>
+├── <span class="file">SKILL.md</span>                       <span class="comment"># Skill metadata + workflow (read by agent)</span>
+├── <span class="file">README.md</span>                      <span class="comment"># This file (GitHub-flavored)</span>
+├── <span class="file">README.html</span>                     <span class="comment"># Standalone HTML version</span>
+├── <span class="dir">scripts/</span>
+│   ├── <span class="file">setup-playwright.mjs</span>       <span class="comment"># One-time env bootstrap</span>
+│   ├── <span class="file">capture-screenshot.mjs</span>     <span class="comment"># Screenshot capture (full/viewport/multi-device)</span>
+│   ├── <span class="file">scrape-site.mjs</span>            <span class="comment"># Full asset stack scraper</span>
+│   ├── <span class="file">analyze-stack.mjs</span>          <span class="comment"># Framework/lib/hosting detector</span>
+│   └── <span class="file">design-tokens.mjs</span>          <span class="comment"># Design token extractor</span>
+├── <span class="dir">references/</span>
+│   ├── <span class="file">scraping-guide.md</span>          <span class="comment"># SPAs, lazy-load, auth, iframes, detection rules</span>
+│   ├── <span class="file">clone-patterns.md</span>          <span class="comment"># Patterns for landing/dashboard/blog/e-commerce</span>
+│   └── <span class="file">ethics.md</span>                  <span class="comment"># IP, robots.txt, ToS, fair use</span>
+└── <span class="dir">assets/</span>
+    └── <span class="file">clone-template.html</span>        <span class="comment"># Starter HTML skeleton for clones</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMPARISON ===================== -->
+<section id="comparison">
+  <div class="container">
+    <h2><span class="num">🆚</span> Comparison with Related Skills</h2>
+    <table class="compare-table">
+      <thead>
+        <tr><th>Skill</th><th>Best for</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight"><td><code>web-desg</code> (this)</td><td>Capture + scrape + analyze + clone a site's full design <strong>+ debug WebUI runtime errors</strong></td></tr>
+        <tr><td><code>agent-browser</code></td><td>Interactive browser automation (click, type, navigate)</td></tr>
+        <tr><td><code>web-shader-extractor</code></td><td>Extracting WebGL/Canvas shader code</td></tr>
+        <tr><td><code>web-reader</code></td><td>Extracting article content as text</td></tr>
+        <tr><td><code>design</code></td><td>Designing fresh UIs from scratch with style presets</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== ETHICS ===================== -->
+<section id="ethics">
+  <div class="container">
+    <h2><span class="num">⚖️</span> Ethics &amp; Legal</h2>
+    <p class="lead">Cloning a site's <strong>design patterns</strong> for learning, prototyping, and inspiration is generally fine. Cloning a site's <strong>trademarks, copyrighted assets, or proprietary copy</strong> and shipping them as your own is not.</p>
+    <div class="callout">
+      <p><strong>Always:</strong></p>
+      <p>• Check <code>robots.txt</code> and Terms of Service before scraping</p>
+      <p>• Replace logos, marketing copy, and product names with placeholders in clones</p>
+      <p>• Credit the original site in a comment: <code>&lt;!-- Design inspired by [URL] --&gt;</code></p>
+      <p style="margin-top: 12px;">See <a href="#" style="color: var(--accent);">references/ethics.md</a> for the full guidance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTRIBUTING ===================== -->
+<section id="contributing">
+  <div class="container">
+    <h2><span class="num">🤝</span> Contributing</h2>
+    <p>Contributions are welcome! Especially valuable:</p>
+    <ul style="margin-left: 24px; margin-bottom: 20px; color: var(--text-muted);">
+      <li><strong style="color: var(--text);">New framework detectors</strong> in <code>analyze-stack.mjs</code> (see <code>references/scraping-guide.md</code> for the rule format)</li>
+      <li><strong style="color: var(--text);">New device presets</strong> in <code>capture-screenshot.mjs</code></li>
+      <li><strong style="color: var(--text);">New clone patterns</strong> in <code>references/clone-patterns.md</code></li>
+      <li><strong style="color: var(--text);">Test cases</strong> — run the pipeline on sites you know and report mismatches</li>
+    </ul>
+<pre><span class="comment"># Fork → Branch → PR</span>
+git checkout -b feat/new-detector
+<span class="comment"># Make changes</span>
+npm test  <span class="comment"># (if added)</span>
+git commit -m <span class="string">"feat: detect SolidStart"</span>
+git push origin feat/new-detector
+<span class="comment"># Open PR</span></pre>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="cta">
+  <div class="container">
+    <h2 style="justify-content: center;">Ready to clone?</h2>
+    <p class="lead" style="max-width: 600px; margin: 0 auto;">Install the skill, run the setup script, and start capturing sites in under 2 minutes.</p>
+    <div class="cta-buttons">
+      <a class="btn btn-primary" href="#quick-start">🚀 Get Started</a>
+      <a class="btn btn-secondary" href="#debugging">🐛 See Debugging Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="container">
+    <p>MIT © 2026 · Built with <a href="https://github.com">Community</a> · Powered by <a href="https://playwright.dev">Playwright</a></p>
+    <p style="margin-top: 8px;">If this skill saved you time, consider ⭐ starring the repo.</p>
+  </div>
+</footer>
+
+</body>
+</html>
