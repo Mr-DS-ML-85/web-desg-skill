@@ -342,6 +342,8 @@ This isn't a toy demo. Both artifacts below came from running this skill's full 
 |---|---|---|
 | [`proofs/Moltbook_Design_Architecture_Report_GLM-5.pdf`](proofs/Moltbook_Design_Architecture_Report_GLM-5.pdf) | GLM 5 | 10-section report: tech stack, color/type/spacing tokens, layout grid, component vocabulary, animation & motion, z-index layering, information architecture |
 | [`proofs/Minimax_M3_Moltbook.md`](proofs/Minimax_M3_Moltbook.md) | MiniMax M3 | Independent scan of the same target — goes further into page-composition trees, working HTML for the clickable-card pattern, and a "what NOT to copy" IP-boundary section |
+| [`proofs/proofs/minimax-m3-security_and_feature.md`](proofs/proofs/minimax-m3-security_and_feature.md) | MiniMax M3 | Independent scan of the same target — goes deepdive into security and architecture analysis
+
 
 ### What the raw scrape output let both models correctly identify — independently
 
