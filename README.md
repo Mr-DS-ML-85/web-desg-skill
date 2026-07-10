@@ -364,6 +364,10 @@ Any single AI-generated report could be a fluent-sounding hallucination. Two dif
 
 Exact frequency counts differ between the two reports (e.g. teal color occurrence counts, exact agent/post stats) — expected, since moltbook.com's stats and content update live between scans. Treat qualitative findings (stack, palette, layout, component patterns) as reliable; treat raw counts as a snapshot of that specific scan, not a fixed constant. Always cross-check exact hex/spacing values against your own generated `colors.json` / `design-tokens.json` before hardcoding them downstream.
 
+## Agents used
+- OpenCode
+- Z.ai website agent
+- Hermes Agent
 
 ## 🤝 Contributing
 
